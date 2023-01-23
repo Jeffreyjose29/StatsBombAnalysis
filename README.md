@@ -7,7 +7,7 @@ The analysis is done within the R programming language.
 
 ## Data Sources
 
-<img src="C:\Users\jeffr\AppData\Roaming\Typora\typora-user-images\image-20230123220557751.png" alt="image-20230123220557751" style="zoom:80%;" />
+![img](https://dtai.cs.kuleuven.be/sports/static/ee39fa2918398059e9be62c32c1b48c4/74404/statsbomb_logo.png)
 
 *Of course we collect data. Better data than anyone else, in fact. It’s collected to a more detailed spec and with more care, consideration and accuracy than anyone else. It has been crafted by analysts for analysts and has transformed the understanding of sport.*
 
