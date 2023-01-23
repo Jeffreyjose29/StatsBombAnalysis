@@ -7,7 +7,7 @@ The analysis is done within the R programming language.
 
 ## Data Sources
 
-![image-20230123220557751](C:\Users\jeffr\AppData\Roaming\Typora\typora-user-images\image-20230123220557751.png)
+<img src="C:\Users\jeffr\AppData\Roaming\Typora\typora-user-images\image-20230123220557751.png" alt="image-20230123220557751" style="zoom:80%;" />
 
 *Of course we collect data. Better data than anyone else, in fact. It’s collected to a more detailed spec and with more care, consideration and accuracy than anyone else. It has been crafted by analysts for analysts and has transformed the understanding of sport.*
 
@@ -15,7 +15,7 @@ The analysis is done within the R programming language.
 
 *Together, our data and IQ platforms allow soccer and football teams to get an edge on the competition in terms of player recruitment and scouting, performance analysis and opposition evaluation. We help our customers leave nothing to chance. We are the data champions.* 
 
-**~ StatsBomb Website**
+~ StatsBomb Website
 
 **To Learn More About StatsBomb, Head To:** https://statsbomb.com/
 
