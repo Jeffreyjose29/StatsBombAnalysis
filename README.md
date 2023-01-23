@@ -21,3 +21,24 @@ The analysis is done within the R programming language.
 
 ## Installation Of StatsBombR In RStudio
 
+StatBomb's former data scientist Derrick Yam created StatsBombR, an R package dedicated making using of StatsBomb data in R much easier. It can be found on Github at the following link, along with much more information on its uses. There are lots of helful functions within it that you should get to know.
+
+https://github.com/statsbomb/StatsBombR
+
+1. To install the package in R, you'll need to install the "devtools" package, which can be done by running the following line of code:
+
+   ```R
+   install.packages("devtools")
+   install.packages("remotes")
+   remotes:install_version("SSDMTools", "1.1-221")
+   ```
+
+2. Then, to install StatsBombR itself, run:
+
+   ```R
+   devtools:install_github("statsbomb/StatsBombR")
+   library(StatsBombR)
+   ```
+
+   
+
