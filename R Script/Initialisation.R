@@ -55,11 +55,41 @@ shots_goals %>%
        subtitle = "FIFA World Cup 2022 Qatar")
 
 
+# What percentage of goals were scored by midfield forward and defense in the tournament
+StatsBombData %>%
+  group_by(team.name, player.name, player.id, position.name) %>%
+  summarise(shots = sum(type.name=="Shot", na.rm = TRUE),
+            goals = sum(shot.outcome.name=="Goal", na.rm = TRUE)) %>%
+  drop_na() %>%
+  mutate(position_simplified = if_else(position.name %in% c("Left Midfield", "Right Midfield", "Left Center Midfield",
+                                                                         "Center Defensive Midfield", "Left Defensive Midfield",
+                                                                         "Right Center Midfield", "Right Defensive Midfield",
+                                                                         "Center Attacking Midfield", "Left Attacking Midfield", 
+                                                                         "Right Attacking Midfield"), "Midfield",
+                                       if_else(position.name %in% c("Left Wing", "Right Wing", "Center Forward",
+                                                                                 "Left Center Forward", "Right Center Forward"), "Forward",
+                                               if_else(position.name %in% c("Center Back", "Right Center Back", "Right Wing Back",
+                                                                                         "Right Back", "Left Center Back", "Left Back", 
+                                                                                         "Left Wing Back"), "Defense",
+                                                       if_else(position.name == "Goalkeeper", "Goal-Keeper", "Substitute"))))) %>%
+  group_by(position_simplified) %>%
+  summarise(goals = sum(goals, na.rm = TRUE)) %>%
+  arrange(desc(position_simplified)) %>%
+  mutate(prop = goals / sum(goals) * 100) %>%
+  mutate(ypos = cumsum(prop) - 0.5*prop) %>%
+  ggplot(aes(x = "", y = prop, fill = position_simplified)) + geom_bar(stat="identity", width=3, color="black") +
+    coord_polar("y", start=0) +
+    theme_void() + 
+    theme(legend.position="right") +
+  labs(title = "Goals From Playing Position Through Tournament",
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Playing Position") 
+
 
 
 player_shots = StatsBombData %>%
-  group_by(player.name, player.id) %>%
-  summarise(shots = sum(type.name=="Shot", na.rm = TRUE)) #1
+  group_by(team.name, player.name, player.id) %>%
+  summarise(shots = sum(type.name=="Shot", na.rm = TRUE),
+            goals = sum(shot.outcome.name=="Goal", na.rm = TRUE)) #1
 player_minutes = get.minutesplayed(StatsBombData) #2
 player_minutes = player_minutes %>%
   group_by(player.id) %>%
