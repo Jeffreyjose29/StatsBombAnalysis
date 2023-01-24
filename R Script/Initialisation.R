@@ -56,7 +56,7 @@ shots_goals %>%
 
 
 # What percentage of goals were scored by midfield forward and defense in the tournament
-StatsBombData %>%
+players_shots <- StatsBombData %>%
   group_by(team.name, player.name, player.id, position.name) %>%
   summarise(shots = sum(type.name=="Shot", na.rm = TRUE),
             goals = sum(shot.outcome.name=="Goal", na.rm = TRUE)) %>%
@@ -71,19 +71,22 @@ StatsBombData %>%
                                                if_else(position.name %in% c("Center Back", "Right Center Back", "Right Wing Back",
                                                                                          "Right Back", "Left Center Back", "Left Back", 
                                                                                          "Left Wing Back"), "Defense",
-                                                       if_else(position.name == "Goalkeeper", "Goal-Keeper", "Substitute"))))) %>%
+                                                       if_else(position.name == "Goalkeeper", "Goal-Keeper", "Substitute")))))
+
+players_shots %>%
   group_by(position_simplified) %>%
   summarise(goals = sum(goals, na.rm = TRUE)) %>%
-  arrange(desc(position_simplified)) %>%
-  mutate(prop = goals / sum(goals) * 100) %>%
-  mutate(ypos = cumsum(prop) - 0.5*prop) %>%
-  ggplot(aes(x = "", y = prop, fill = position_simplified)) + geom_bar(stat="identity", width=3, color="black") +
-    coord_polar("y", start=0) +
-    theme_void() + 
-    theme(legend.position="right") +
-  labs(title = "Goals From Playing Position Through Tournament",
-       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Playing Position") 
-
+  ggplot(aes(x = reorder(position_simplified, -goals), y = goals, fill = position_simplified, colour = position_simplified)) + geom_bar(stat = "identity") +
+  labs(x = "Position",
+       y = "Goals",
+       title = "Goals From Playing Position Through Tournament",
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Playing Position") + guides(colour="none") +
+  scale_fill_manual(values = c(rgb(0, 166, 251, max = 255), rgb(5, 130, 202, max = 255),
+                               rgb(0, 100, 148, max = 255), rgb(0, 53, 84, max = 255),
+                               rgb(5, 25, 35, max = 255))) +
+  scale_colour_manual(values = c(rgb(0, 166, 251, max = 255), rgb(5, 130, 202, max = 255),
+                               rgb(0, 100, 148, max = 255), rgb(0, 53, 84, max = 255),
+                               rgb(5, 25, 35, max = 255)))
 
 
 player_shots = StatsBombData %>%
