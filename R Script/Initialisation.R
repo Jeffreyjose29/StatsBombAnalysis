@@ -1,5 +1,5 @@
 # Package names
-packages <- c("tidyverse", "ggplot2", "devtools", "StatsBombR", "SBpitch")
+packages <- c("tidyverse", "ggplot2", "devtools", "StatsBombR", "SBpitch", "hrbrthemes")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -11,12 +11,6 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 
 
-# See all the competitions that are free competitions
-free_competitions <- FreeCompetitions()
-Mathces <- FreeMatches(free_competitions)
-StatsBombData <- StatsBombFreeEvents()
-
-
 # For this project, let's explore the FIFA World Cup Stats
 free_competitions <- FreeCompetitions() %>%
   filter(competition_id == 43 & season_id == 106)
@@ -25,24 +19,41 @@ StatsBombData <- free_allevents(MatchesDF = matches, Parallel = T)
 StatsBombData <- allclean(StatsBombData)
 
 
-shots_goals = StatsBombData %>%
+# Overall competition stats
+
+# 1.0. Shots & Goals
+shots_goals <- StatsBombData %>%
   group_by(team.name) %>% #1
   summarise(shots = sum(type.name=="Shot", na.rm = TRUE),
-            goals = sum(shot.outcome.name=="Goal", na.rm = TRUE)) #2
+            goals = sum(shot.outcome.name=="Goal", na.rm = TRUE),
+            shots_per_game = sum(type.name=="Shot", na.rm = TRUE)/n_distinct(match_id),
+            goals_per_game = sum(shot.outcome.name=="Goal", na.rm = TRUE)/n_distinct(match_id),
+            conversion_rate = round(sum(shot.outcome.name=="Goal", na.rm = TRUE)/sum(type.name=="Shot", na.rm = TRUE)*100, 2))
 
-shots_goals_per_game = StatsBombData %>%
-  group_by(team.name) %>%
-  summarise(shots = sum(type.name=="Shot", na.rm = TRUE)/n_distinct(match_id),
-            goals = sum(shot.outcome.name=="Goal", na.rm = TRUE)/n_distinct(match_id))
 
-ggplot(data = shots_goals,
-       aes(x = reorder(team.name, shots), y = shots)) + #1
-  geom_bar(stat = "identity", width = 0.5) + #2
-  labs(y="Shots") + #3
-  theme(axis.title.y = element_blank()) + #4
-  scale_y_continuous( expand = c(0,0)) + #5
-  coord_flip() + #6
-  theme_SB() #7
+# Overall Shots & Goals
+rbind(shots_goals %>% select(team.name, shots) %>% rename("value" = shots) %>% mutate(shots_and_goals = "Shots"),
+      shots_goals %>% select(team.name, goals) %>% rename("value" = goals) %>% mutate(shots_and_goals = "Goals")
+) %>%
+  ggplot(aes(x = reorder(team.name, -value), y = value, fill = factor(shots_and_goals, levels = c('Shots', 'Goals')))) + 
+  geom_bar(stat = "identity", position = "dodge", colour = "black") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(x = "Team",
+       y = "Shots And Goals",
+       title = "Number Of Shots & Goals Through Tournament",
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Shots & Goals") +
+  scale_fill_manual(values = c(rgb(139, 22, 47, max = 255), rgb(169, 133, 58, max = 255)))
+
+# Conversion Rate
+shots_goals %>%
+  ggplot(aes(x = reorder(team.name, -conversion_rate), y = conversion_rate)) + 
+  geom_bar(stat = "identity", position = "dodge", colour = "black", fill = rgb(139, 22, 47, max = 255)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(x = "Team",
+       y = "Conversion Rate (%)",
+       title = "Shots To Goals Conversion Percentage",
+       subtitle = "FIFA World Cup 2022 Qatar")
+
 
 
 
@@ -56,3 +67,4 @@ player_minutes = player_minutes %>%
 player_shots = left_join(player_shots, player_minutes) #4
 player_shots = player_shots %>% mutate(nineties = minutes/90) #5
 player_shots = player_shots %>% mutate(shots_per90 = shots/nineties) #6
+
