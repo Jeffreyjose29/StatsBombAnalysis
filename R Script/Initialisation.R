@@ -54,6 +54,20 @@ shots_goals %>%
        title = "Shots To Goals Conversion Percentage",
        subtitle = "FIFA World Cup 2022 Qatar")
 
+# Shots Per Game By Average Goals Per Game
+rbind(shots_goals %>% select(team.name, shots_per_game) %>% rename("value" = shots_per_game) %>% mutate(shots_and_goals = "Shots Per Game"),
+      shots_goals %>% select(team.name, goals_per_game) %>% rename("value" = goals_per_game) %>% mutate(shots_and_goals = "Goals Per Game")
+) %>%
+  ggplot(aes(x = reorder(team.name, -value), y = value, fill = factor(shots_and_goals, levels = c('Shots Per Game', 'Goals Per Game')))) + 
+  geom_bar(stat = "identity", position = "stack", colour = "black") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(x = "Team",
+       y = "Average Shots And Goals",
+       title = "Average Shots & Goals Per Match Through Tournament",
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Shots & Goals") +
+  scale_fill_manual(values = c(rgb(139, 22, 47, max = 255), rgb(169, 133, 58, max = 255)))
+
+
 
 # What percentage of goals were scored by midfield forward and defense in the tournament
 players_shots <- StatsBombData %>%
@@ -101,3 +115,32 @@ player_shots = left_join(player_shots, player_minutes) #4
 player_shots = player_shots %>% mutate(nineties = minutes/90) #5
 player_shots = player_shots %>% mutate(shots_per90 = shots/nineties) #6
 
+# Look at the efficiency rate among the top 5 goal scorers of the tournament
+top10_scorers <- player_shots %>%
+  arrange(desc(goals)) %>%
+  head(10) 
+
+rbind(top10_scorers %>% select(team.name, player.name, shots) %>% rename("value" = shots) %>% mutate(shots_and_goals_conversion = "Shots"),
+      top10_scorers %>% select(team.name, player.name, goals) %>% rename("value" = goals) %>% mutate(shots_and_goals_conversion = "Goals"),
+      top10_scorers %>% select(team.name, player.name, shots, goals) %>% mutate(value = ((goals/shots)*100)) %>% 
+        mutate(shots_and_goals_conversion = "Conversion Percentage") %>% select(team.name, player.name, value, shots_and_goals_conversion)
+) %>%
+  mutate(across(shots_and_goals_conversion, factor, levels = c("Shots", "Goals", "Conversion Percentage"))) %>%
+  ggplot(aes(x = reorder(player.name, -value), y = value, fill = player.name)) + 
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(x = "Player Name",
+       y = "Shots, Goals & Conversion Percentage",
+       title = "Top 10 Goal Scorers Vs. Scoring Efficiency",
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Shots & Goals") +
+  scale_fill_manual(values = c(rgb(5, 60, 94, max = 255), rgb(29, 57, 88, max = 255),
+                               rgb(53, 54, 82, max = 255), rgb(76, 51, 77, max = 255),
+                               rgb(100, 48, 71, max = 255), rgb(124, 46, 65, max = 255),
+                               rgb(148, 43, 59, max = 255), rgb(171, 40, 54, max = 255),
+                               rgb(195, 37, 48, max = 255), rgb(219, 34, 42, max = 255))) +
+  facet_wrap(~shots_and_goals_conversion, nrow = 1, scales = "free")
+
+
+scale_fill_manual(values = c(rgb(118,197,240, max = 255), rgb(239,200,21, max = 255),
+                             rgb(42,56,91, max = 255), rgb(219,0,32, max = 255),
+                             rgb(45,47,58, max = 255), rgb(247,139,49, max = 255))) 
