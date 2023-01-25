@@ -132,7 +132,7 @@ rbind(top10_scorers %>% select(team.name, player.name, shots) %>% rename("value"
   labs(x = "Player Name",
        y = "Shots, Goals & Conversion Percentage",
        title = "Top 10 Goal Scorers Vs. Scoring Efficiency",
-       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Shots & Goals") +
+       subtitle = "FIFA World Cup 2022 Qatar") + labs(fill="Players") +
   scale_fill_manual(values = c(rgb(5, 60, 94, max = 255), rgb(29, 57, 88, max = 255),
                                rgb(53, 54, 82, max = 255), rgb(76, 51, 77, max = 255),
                                rgb(100, 48, 71, max = 255), rgb(124, 46, 65, max = 255),
