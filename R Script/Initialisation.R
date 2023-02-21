@@ -141,6 +141,8 @@ rbind(top10_scorers %>% select(team.name, player.name, shots) %>% rename("value"
   facet_wrap(~shots_and_goals_conversion, nrow = 1, scales = "free")
 
 
-scale_fill_manual(values = c(rgb(118,197,240, max = 255), rgb(239,200,21, max = 255),
-                             rgb(42,56,91, max = 255), rgb(219,0,32, max = 255),
-                             rgb(45,47,58, max = 255), rgb(247,139,49, max = 255))) 
+
+
+#scale_fill_manual(values = c(rgb(118,197,240, max = 255), rgb(239,200,21, max = 255),
+#                             rgb(42,56,91, max = 255), rgb(219,0,32, max = 255),
+#                             rgb(45,47,58, max = 255), rgb(247,139,49, max = 255))) 
